@@ -5,7 +5,7 @@ A Python pipeline for detecting **powerlines**, **poles**, **buildings**, and **
 
 Trained and evaluated on the [**DALES dataset**](https://udayton.edu/engineering/research/centers/vision_lab/research/was_data_analysis_and_processing/dale.php) — a large-scale aerial LiDAR dataset with point-level semantic labels.
 
-<img width="901" height="843" alt="Screenshot 2023-05-20 at 10 11 39 AM" src="https://github.com/user-attachments/assets/27047b3c-e712-4f9a-9168-b545b318b543" />
+<img width="450" height="450" alt="Screenshot 2023-05-20 at 10 11 39 AM" src="https://github.com/user-attachments/assets/27047b3c-e712-4f9a-9168-b545b318b543" />
 
 
 
