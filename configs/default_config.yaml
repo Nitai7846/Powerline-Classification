@@ -1,0 +1,108 @@
+# default_config.yaml
+# ====================
+# Default hyperparameters and pipeline settings for the LiDAR powerline
+# detection project.  Override any value via command-line arguments in the
+# individual scripts.
+
+# ---------------------------------------------------------------------------
+# Dataset
+# ---------------------------------------------------------------------------
+dataset:
+  train_dir: "/path/to/DALESObjects/train"   # Directory of .ply training files
+  test_dir:  "/path/to/DALESObjects/test"    # Directory of .ply test files
+  output_dir: "data/merged"                  # Where merged per-class CSVs are saved
+
+  # DALES semantic class IDs used in this project
+  classes:
+    vegetation: 2
+    powerline:  5
+    pole:       7
+    building:   8
+
+  # Minimum point count per scene-class to compute KD-Tree features
+  min_points_for_features: 1000
+
+# ---------------------------------------------------------------------------
+# Preprocessing filters
+# ---------------------------------------------------------------------------
+filters:
+  ground:
+    cloth_resolution: 0.5      # CSF cloth resolution (metres)
+    slope_smooth: false
+
+  vegetation:
+    cell_size: 1.0             # Grid cell side length (metres)
+    density_threshold: 10      # Points-per-cell threshold for dense canopy
+
+  building:
+    normal_variance_deg: 60    # Normal variance threshold for planar patches
+    coplanarity_deg: 75
+    outlier_ratio: 0.75
+    min_num_points: 10
+    knn: 30
+
+# ---------------------------------------------------------------------------
+# Feature extraction
+# ---------------------------------------------------------------------------
+features:
+  kdtree:
+    k_neighbours: 250          # Neighbours used for covariance computation
+
+  radius_search:
+    radius: 2.0                # Radius (metres) for construct_local_neighborhood
+    max_k: 100
+
+# ---------------------------------------------------------------------------
+# Detection (tiling + Hough)
+# ---------------------------------------------------------------------------
+detection:
+  tile_size: 50.0              # Tile side length in metres
+  voxel_size: 0.2              # Voxel size for top-down projection (metres)
+  min_tile_points: 250         # Minimum points to run the classifier on a tile
+  line_threshold: 4            # Minimum Hough lines to flag a tile as candidate
+
+  hough:
+    kernel_size: 7
+    blur_sigma: 190
+    canny_low: 0
+    canny_high: 100
+    rho: 1.0
+    theta_deg: 1.0
+    vote_threshold: 8
+    min_line_length: 15
+    max_line_gap: 1
+
+# ---------------------------------------------------------------------------
+# Model training
+# ---------------------------------------------------------------------------
+training:
+  test_size: 0.2               # Fraction of data held out for evaluation
+  random_state: 42
+  epochs: 10
+  optimizer: "adam"
+  loss: "categorical_crossentropy"
+
+  architecture:
+    hidden_layers: [64, 64, 32, 16]
+    activation: "relu"
+    output_activation: "softmax"
+    num_classes: 4
+
+  output_dir: "weights"        # Where model.h5 and scaler_file.pkl are saved
+
+# ---------------------------------------------------------------------------
+# Feature list (must match between training and inference)
+# ---------------------------------------------------------------------------
+features_used:
+  - z
+  - intensity
+  - distance
+  - surface_variation
+  - linearity
+  - planarity
+  - scattering
+  - anisotropy
+  - curvature
+  - sum_of_eig
+  - omnivariance
+  - eigentropy
